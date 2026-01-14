@@ -6,122 +6,10 @@
 #  - Works on any Windows PC
 #  - No admin rights required
 #
-#  GitHub: github.com/[YOUR-USERNAME]/HytaleGPUFix
+#  GitHub: github.com/DailyNum/HytaleGPUFix
 # ============================================
 
-# --- Configuration ---
 $script:Version = "1.0"
-$script:CounterNamespace = "hytalegpufix"
-$script:CounterKey = "runs"
-$script:PrefsFile = Join-Path $env:APPDATA "HytaleGPUFix\prefs.json"
-
-# ============================================
-#  ANALYTICS (Opt-in, Anonymous)
-# ============================================
-
-function Get-UserConsent {
-    # Check if user already gave consent preference
-    if (Test-Path $script:PrefsFile) {
-        try {
-            $prefs = Get-Content $script:PrefsFile -Raw | ConvertFrom-Json
-            return $prefs.analyticsConsent
-        } catch {
-            # Corrupted file, ask again
-        }
-    }
-
-    # First run - ask for consent
-    Clear-Host
-    Write-Host ""
-    Write-Host "  ========================================" -ForegroundColor Cyan
-    Write-Host "       HYTALE GPU SELECTOR v$($script:Version)" -ForegroundColor White
-    Write-Host "  ========================================" -ForegroundColor Cyan
-    Write-Host ""
-    Write-Host "  Welcome! Before we start, a quick question:" -ForegroundColor White
-    Write-Host ""
-    Write-Host "  ----------------------------------------" -ForegroundColor DarkGray
-    Write-Host "  ANONYMOUS USAGE TRACKING" -ForegroundColor Yellow
-    Write-Host "  ----------------------------------------" -ForegroundColor DarkGray
-    Write-Host ""
-    Write-Host "  To help improve this tool, we'd like to" -ForegroundColor White
-    Write-Host "  count how many times it's been used." -ForegroundColor White
-    Write-Host ""
-    Write-Host "  What we track:" -ForegroundColor Yellow
-    Write-Host "    - Just a simple counter (+1 each run)" -ForegroundColor DarkGray
-    Write-Host ""
-    Write-Host "  What we DON'T track:" -ForegroundColor Yellow
-    Write-Host "    - No personal information" -ForegroundColor DarkGray
-    Write-Host "    - No IP addresses" -ForegroundColor DarkGray
-    Write-Host "    - No hardware details" -ForegroundColor DarkGray
-    Write-Host "    - No usernames or paths" -ForegroundColor DarkGray
-    Write-Host ""
-    Write-Host "  This is completely optional." -ForegroundColor White
-    Write-Host "  The tool works exactly the same either way." -ForegroundColor DarkGray
-    Write-Host ""
-    Write-Host "  ----------------------------------------" -ForegroundColor DarkGray
-    Write-Host ""
-    Write-Host "  [Y] Yes, count my usage (anonymous)" -ForegroundColor Green
-    Write-Host "  [N] No thanks, skip tracking" -ForegroundColor White
-    Write-Host ""
-
-    $response = Read-Host "  Your choice (Y/N)"
-
-    $consent = $response -match "^[Yy]"
-
-    # Save preference
-    try {
-        $prefsDir = Split-Path $script:PrefsFile -Parent
-        if (!(Test-Path $prefsDir)) {
-            New-Item -ItemType Directory -Path $prefsDir -Force | Out-Null
-        }
-
-        $prefs = @{
-            analyticsConsent = $consent
-            consentDate = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
-            version = $script:Version
-        }
-
-        $prefs | ConvertTo-Json | Set-Content $script:PrefsFile -Force
-
-        Write-Host ""
-        if ($consent) {
-            Write-Host "  [OK] Thanks! Your preference has been saved." -ForegroundColor Green
-        } else {
-            Write-Host "  [OK] No problem! Tracking disabled." -ForegroundColor Green
-        }
-        Write-Host "  (You can delete %APPDATA%\HytaleGPUFix to reset)" -ForegroundColor DarkGray
-        Start-Sleep -Seconds 2
-    } catch {
-        # Couldn't save prefs, continue anyway
-    }
-
-    return $consent
-}
-
-function Send-AnonymousPing {
-    param([bool]$hasConsent)
-
-    if (-not $hasConsent) { return }
-
-    try {
-        # Use CountAPI - free, anonymous counter service
-        # Only increments a counter, no data collected
-        $uri = "https://api.countapi.xyz/hit/$($script:CounterNamespace)/$($script:CounterKey)"
-        $null = Invoke-RestMethod -Uri $uri -Method Get -TimeoutSec 3 -ErrorAction SilentlyContinue
-    } catch {
-        # Silently fail - don't interrupt user experience
-    }
-}
-
-function Get-TotalRuns {
-    try {
-        $uri = "https://api.countapi.xyz/get/$($script:CounterNamespace)/$($script:CounterKey)"
-        $result = Invoke-RestMethod -Uri $uri -Method Get -TimeoutSec 3 -ErrorAction SilentlyContinue
-        return $result.value
-    } catch {
-        return $null
-    }
-}
 
 # ============================================
 #  UI FUNCTIONS
@@ -382,13 +270,6 @@ function Apply-GPUPreference {
 #  MAIN SCRIPT
 # ============================================
 
-# Check for analytics consent (first run will prompt)
-$hasConsent = Get-UserConsent
-
-# Send anonymous ping if user consented
-Send-AnonymousPing -hasConsent $hasConsent
-
-# Show main UI
 Show-Banner
 
 # Detect ALL GPUs

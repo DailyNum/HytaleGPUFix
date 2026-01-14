@@ -21,35 +21,13 @@ HOW TO USE:
 
 1. Double-click "Fix-Hytale-GPU.bat"
 
-2. (First run only) Choose if you want to help us count
-   usage - completely optional and anonymous
+2. The tool will show your available GPUs
 
-3. The tool will show your available GPUs
+3. Select your gaming GPU (usually the NVIDIA or AMD one)
 
-4. Select your gaming GPU (usually the NVIDIA or AMD one)
-
-5. Restart Hytale
+4. Restart Hytale
 
 That's it!
-
---------------------------------------------
-PRIVACY & ANALYTICS:
---------------------------------------------
-
-On first run, the tool asks if you'd like to help us
-track how many people use it.
-
-If you say YES:
-  - We count +1 to an anonymous counter
-  - No personal info, IPs, hardware, or usernames
-  - Just a simple number to know if people find it useful
-
-If you say NO:
-  - No data is sent, ever
-  - The tool works exactly the same
-
-Your choice is saved so you won't be asked again.
-To reset: delete %APPDATA%\HytaleGPUFix folder
 
 --------------------------------------------
 REQUIREMENTS:

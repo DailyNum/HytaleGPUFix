@@ -93,20 +93,6 @@ This tool tells Windows: *"Always use my gaming GPU for Hytale."*
 
 ---
 
-## 🔒 Privacy
-
-On first run, the tool asks if you'd like to help count usage (optional).
-
-**If you say YES:**
-- Increments an anonymous counter (+1)
-- No personal data, IPs, hardware info, or usernames collected
-
-**If you say NO:**
-- Nothing is sent, ever
-- Tool works exactly the same
-
----
-
 ## 🛠️ Troubleshooting
 
 **"Hytale installation not found"**
